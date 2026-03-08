@@ -25,9 +25,14 @@ export default function HeroSection() {
         const x = springX.get();
         const y = springY.get();
         const v = `radial-gradient(circle 350px at ${x}px ${y}px, black 0%, transparent 100%)`;
-        maskRef.current.style.webkitMaskImage = v;
-        maskRef.current.style.maskImage = v;
-        maskRef.current.style.opacity = "1";
+        const s = maskRef.current.style;
+        s.setProperty('-webkit-mask-image', v);
+        s.setProperty('mask-image', v);
+        s.setProperty('-webkit-mask-size', '100% 100%');
+        s.setProperty('mask-size', '100% 100%');
+        s.setProperty('-webkit-mask-repeat', 'no-repeat');
+        s.setProperty('mask-repeat', 'no-repeat');
+        s.opacity = "1";
       }
       rafId = requestAnimationFrame(update);
     };
