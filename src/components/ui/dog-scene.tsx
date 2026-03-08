@@ -3,7 +3,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 
 type DogState = 'idle' | 'looking' | 'barking' | 'playing_dead';
 
@@ -124,8 +123,8 @@ export function DogScene({ className }: { className?: string }) {
 
     // Load model
     const loader = new GLTFLoader();
-    loader.setMeshoptDecoder(MeshoptDecoder);
-    loader.load('https://github.com/Levonmov1/Levon-portfolio-website/releases/download/v1.0/jrterrier_fbx.glb', (gltf) => {
+    const MODEL_URL = 'https://github.com/Levonmov1/Levon-portfolio-website/releases/download/v1.0/jrterrier_fbx.glb';
+    loader.load(MODEL_URL, (gltf) => {
       if (disposed) return;
 
       model = gltf.scene;
@@ -163,6 +162,8 @@ export function DogScene({ className }: { className?: string }) {
       });
 
       scheduleIdleVariant();
+    }, undefined, (error) => {
+      console.error('Failed to load dog model:', error);
     });
 
     // Mouse tracking — listens on window for cursor-following
