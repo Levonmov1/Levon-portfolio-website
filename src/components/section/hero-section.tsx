@@ -8,6 +8,7 @@ import BlurFade from "@/components/magicui/blur-fade";
 
 export default function HeroSection() {
   const innerRef = useRef<HTMLDivElement>(null);
+  const maskRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   const mouseX = useMotionValue(0);
@@ -16,7 +17,23 @@ export default function HeroSection() {
   const springX = useSpring(mouseX, { damping: 25, stiffness: 200 });
   const springY = useSpring(mouseY, { damping: 25, stiffness: 200 });
 
-  const [maskPosition, setMaskPosition] = useState({ x: 0, y: 0 });
+  // Apply mask directly to DOM via rAF — works in all browsers, no flash on load
+  useEffect(() => {
+    let rafId: number;
+    const update = () => {
+      if (maskRef.current) {
+        const x = springX.get();
+        const y = springY.get();
+        const v = `radial-gradient(circle 350px at ${x}px ${y}px, black 0%, transparent 100%)`;
+        maskRef.current.style.webkitMaskImage = v;
+        maskRef.current.style.maskImage = v;
+        maskRef.current.style.opacity = "1";
+      }
+      rafId = requestAnimationFrame(update);
+    };
+    rafId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(rafId);
+  }, [springX, springY]);
 
   // Mobile detection
   useEffect(() => {
@@ -39,32 +56,14 @@ export default function HeroSection() {
       angle += 0.003;
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      const cx = vw / 2 + Math.cos(angle) * vw * 0.3;
-      const cy = vh / 2 + Math.sin(angle * 0.7) * vh * 0.2;
-      setMaskPosition({ x: cx, y: cy });
+      mouseX.set(vw / 2 + Math.cos(angle) * vw * 0.3);
+      mouseY.set(vh / 2 + Math.sin(angle * 0.7) * vh * 0.2);
       animationId = requestAnimationFrame(animate);
     };
 
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [isMobile]);
-
-  // Subscribe to spring values for mask style
-  useEffect(() => {
-    if (isMobile) return;
-
-    const unsubX = springX.on("change", (latestX) => {
-      setMaskPosition((prev) => ({ ...prev, x: latestX }));
-    });
-    const unsubY = springY.on("change", (latestY) => {
-      setMaskPosition((prev) => ({ ...prev, y: latestY }));
-    });
-
-    return () => {
-      unsubX();
-      unsubY();
-    };
-  }, [springX, springY, isMobile]);
+  }, [isMobile, mouseX, mouseY]);
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -85,11 +84,6 @@ export default function HeroSection() {
     }
   };
 
-  const revealMaskStyle = {
-    WebkitMaskImage: `radial-gradient(circle 350px at ${maskPosition.x}px ${maskPosition.y}px, black 0%, transparent 100%)`,
-    maskImage: `radial-gradient(circle 350px at ${maskPosition.x}px ${maskPosition.y}px, black 0%, transparent 100%)`,
-  };
-
   return (
     <section
       id="home"
@@ -98,31 +92,62 @@ export default function HeroSection() {
       {/* Inner container: rounded frame holding all hero content */}
       <div
         ref={innerRef}
-        className="relative w-full h-full overflow-hidden rounded-2xl border border-border"
+        className="relative w-full h-full overflow-hidden rounded-2xl border border-border border-t-0"
         onMouseMove={handleMouseMove}
       >
-        {/* Seamless notch with tagline at top center */}
-        <div className="absolute top-0 left-0 w-full z-30 pointer-events-none">
-          <svg
-            className="w-full"
-            viewBox="0 0 1200 48"
-            preserveAspectRatio="none"
-            style={{ height: "48px" }}
-          >
-            {/* Fill: background color masks the frame's top border inside the notch */}
+        {/* Mobile notch — wider to fit text on small screens */}
+        <div className="absolute -top-px left-0 w-full z-30 pointer-events-none md:hidden">
+          <svg className="w-full" viewBox="0 0 1200 28" preserveAspectRatio="none" style={{ height: "28px" }}>
             <path
-              d="M0,0 L460,0 Q480,0 480,20 L480,32 Q480,48 500,48 L700,48 Q720,48 720,32 L720,20 Q720,0 740,0 L1200,0 L1200,0 L0,0 Z"
+              d="M0,0 L150,0 C200,0 220,28 280,28 L920,28 C980,28 1000,0 1050,0 L1200,0 L1200,0 L0,0 Z"
               className="fill-background"
             />
-            {/* Stroke: draws only the notch outline (sides + bottom) */}
             <path
-              d="M460,0 Q480,0 480,20 L480,32 Q480,48 500,48 L700,48 Q720,48 720,32 L720,20 Q720,0 740,0"
+              d="M0,0 L150,0 C200,0 220,28 280,28 L920,28 C980,28 1000,0 1050,0 L1200,0"
               className="stroke-border"
               fill="none"
               strokeWidth="1"
             />
           </svg>
-          <p className="absolute inset-0 flex items-center justify-center text-sm md:text-base font-semibold tracking-wide text-foreground whitespace-nowrap pointer-events-auto pt-1">
+          <p className="absolute inset-0 flex items-end justify-center text-sm font-semibold tracking-wide text-foreground whitespace-nowrap pointer-events-auto pb-1">
+            What truly matters, lives within.
+          </p>
+        </div>
+
+        {/* Tablet notch — medium width for iPad-sized screens */}
+        <div className="absolute -top-px left-0 w-full z-30 pointer-events-none hidden md:block lg:hidden">
+          <svg className="w-full" viewBox="0 0 1200 28" preserveAspectRatio="none" style={{ height: "28px" }}>
+            <path
+              d="M0,0 L300,0 C340,0 355,28 400,28 L800,28 C845,28 860,0 900,0 L1200,0 L1200,0 L0,0 Z"
+              className="fill-background"
+            />
+            <path
+              d="M0,0 L300,0 C340,0 355,28 400,28 L800,28 C845,28 860,0 900,0 L1200,0"
+              className="stroke-border"
+              fill="none"
+              strokeWidth="1"
+            />
+          </svg>
+          <p className="absolute inset-0 flex items-end justify-center text-sm font-semibold tracking-wide text-foreground whitespace-nowrap pointer-events-auto pb-1">
+            What truly matters, lives within.
+          </p>
+        </div>
+
+        {/* Desktop notch — narrower, elegant proportions */}
+        <div className="absolute -top-px left-0 w-full z-30 pointer-events-none hidden lg:block">
+          <svg className="w-full" viewBox="0 0 1200 28" preserveAspectRatio="none" style={{ height: "28px" }}>
+            <path
+              d="M0,0 L420,0 C450,0 460,28 500,28 L700,28 C740,28 750,0 780,0 L1200,0 L1200,0 L0,0 Z"
+              className="fill-background"
+            />
+            <path
+              d="M0,0 L420,0 C450,0 460,28 500,28 L700,28 C740,28 750,0 780,0 L1200,0"
+              className="stroke-border"
+              fill="none"
+              strokeWidth="1"
+            />
+          </svg>
+          <p className="absolute inset-0 flex items-end justify-center text-base font-semibold tracking-wide text-foreground whitespace-nowrap pointer-events-auto pb-1">
             What truly matters, lives within.
           </p>
         </div>
@@ -137,8 +162,9 @@ export default function HeroSection() {
 
         {/* Reveal layer: Video of playing with dogs */}
         <div
-          className="absolute inset-0 h-full w-full"
-          style={revealMaskStyle}
+          ref={maskRef}
+          className="absolute inset-0 h-full w-full z-20"
+          style={{ opacity: 0 }}
         >
           <video
             src={DATA.heroVideo}
@@ -154,7 +180,7 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
         {/* Text overlay */}
-        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 lg:p-16">
+        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 lg:p-16 z-30">
           <div className="relative z-10 max-w-3xl">
             <BlurFade delay={0.2}>
               <h1 className="text-5xl font-bold tracking-tighter text-white md:text-7xl lg:text-8xl">

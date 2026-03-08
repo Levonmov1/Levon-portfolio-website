@@ -31,18 +31,18 @@ function JourneyDesktop() {
 
   const x = useTransform(
     scrollYProgress,
-    [0, 1],
+    [0, (NUM_PANELS - 1) / NUM_PANELS],
     ["0%", `-${(NUM_PANELS - 1) * 100}%`]
   );
 
   return (
     <div
       ref={outerRef}
-      style={{ height: `${NUM_PANELS * 100}vh` }}
+      style={{ height: `${(NUM_PANELS + 1) * 100}vh` }}
       className="relative"
     >
-      <div className="sticky top-0 h-screen w-screen bg-background p-4 pb-20 md:p-8 md:pb-20 lg:p-12 lg:pb-20">
-        <motion.div className="flex h-full gap-2 md:gap-4 lg:gap-6" style={{ x }}>
+      <div className="sticky top-0 h-screen w-full overflow-hidden bg-background p-4 pb-20 md:p-8 md:pb-20 lg:p-12 lg:pb-20">
+        <motion.div className="flex h-full" style={{ x }}>
           {milestones.map((milestone, index) => (
             <Panel key={`${milestone.year}-${index}`} milestone={milestone} index={index} />
           ))}
@@ -63,8 +63,8 @@ function Panel({
   const num = String(index + 1).padStart(2, "0");
 
   return (
-    <div className="relative min-w-full h-full flex-shrink-0">
-      <div className="h-full w-full overflow-hidden rounded-2xl border border-primary/40">
+    <div className="relative min-w-full h-full flex-shrink-0 pr-2 md:pr-4 lg:pr-6">
+      <div className="relative h-full w-full overflow-hidden rounded-2xl border border-primary/40">
       {/* Background image or solid dark */}
       {milestone.bgImage ? (
         <>
@@ -164,7 +164,7 @@ function JourneyMobile() {
           return (
             <div
               key={`${milestone.year}-${index}`}
-              className="relative rounded-xl border bg-card overflow-hidden"
+              className="relative rounded-xl border border-primary/40 bg-card overflow-hidden"
             >
               {/* Background image */}
               {milestone.bgImage && (

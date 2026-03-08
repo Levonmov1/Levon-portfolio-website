@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { ArrowUpRight } from "lucide-react";
+import { GlowCard } from "@/components/ui/spotlight-card";
 
 interface VentureCardProps {
   name: string;
@@ -28,29 +29,31 @@ export default function VentureCard({
   const logoSrc = resolvedTheme === "dark" ? logoDark : logoLight;
 
   const cardContent = (
-    <div className="group relative border rounded-xl p-6 bg-card hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_-5px] hover:shadow-primary/20 hover:scale-[1.02]">
+    <GlowCard glowColor="orange" customSize className="group w-full h-full p-6">
       {href && (
-        <ArrowUpRight className="absolute top-4 right-4 h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <ArrowUpRight className="absolute top-4 right-4 h-5 w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
       )}
 
-      <div className="mb-4">
-        <Image
-          src={logoSrc}
-          alt={name}
-          width={200}
-          height={48}
-          className="h-12 w-auto object-contain"
-        />
+      <div className="relative z-10">
+        <div className="mb-4">
+          <Image
+            src={logoSrc}
+            alt={name}
+            width={200}
+            height={48}
+            className="h-12 w-auto object-contain"
+          />
+        </div>
+
+        <h3 className="text-xl font-bold">{name}</h3>
+
+        <p className="text-sm text-muted-foreground mt-1">
+          {location} &middot; Founded {founded}
+        </p>
+
+        <p className="text-sm text-muted-foreground mt-2">{description}</p>
       </div>
-
-      <h3 className="text-xl font-bold">{name}</h3>
-
-      <p className="text-sm text-muted-foreground mt-1">
-        {location} &middot; Founded {founded}
-      </p>
-
-      <p className="text-sm text-muted-foreground mt-2">{description}</p>
-    </div>
+    </GlowCard>
   );
 
   if (href) {

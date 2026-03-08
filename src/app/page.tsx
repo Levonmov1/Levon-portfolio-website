@@ -14,10 +14,10 @@ export default function Page() {
       <section id="journey">
         <JourneySection />
       </section>
-      <section id="ventures" className="py-20 md:py-28">
+      <section id="ventures">
         <VenturesSection />
       </section>
-      <section id="hopes-haven" className="py-20 md:py-28">
+      <section id="hopes-haven" className="pb-20 md:pb-28">
         <HopesHavenSection />
       </section>
       <section id="press" className="py-20 md:py-28">
