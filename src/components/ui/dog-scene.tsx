@@ -123,8 +123,7 @@ export function DogScene({ className }: { className?: string }) {
 
     // Load model
     const loader = new GLTFLoader();
-    const MODEL_URL = 'https://github.com/Levonmov1/Levon-portfolio-website/releases/download/v1.0/jrterrier_fbx.glb';
-    loader.load(MODEL_URL, (gltf) => {
+    loader.load('/jrterrier.glb', (gltf) => {
       if (disposed) return;
 
       model = gltf.scene;
