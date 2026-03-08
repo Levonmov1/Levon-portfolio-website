@@ -26,7 +26,7 @@ export const DATA = {
   description:
     "Entrepreneur, technologist, and animal welfare advocate building ventures that merge innovation with purpose.",
   heroImage: "/images/hero-1.JPG",
-  heroVideo: "/images/levon-dogs.mov",
+  heroVideo: "/images/levon-dogs.mp4",
   heroRevealText: "What truly matters, lives within.",
 
   navbar: [
