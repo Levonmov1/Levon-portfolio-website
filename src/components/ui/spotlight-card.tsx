@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, ReactNode } from 'react';
+import React, { useEffect, useRef, useState, ReactNode } from 'react';
 
 interface GlowCardProps {
   children: ReactNode;
@@ -37,8 +37,13 @@ const GlowCard: React.FC<GlowCardProps> = ({
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const mobile = window.matchMedia("(pointer: coarse)").matches;
+    setIsMobile(mobile);
+    if (mobile) return;
+
     const syncPointer = (e: PointerEvent) => {
       const { clientX: x, clientY: y } = e;
 
@@ -76,20 +81,24 @@ const GlowCard: React.FC<GlowCardProps> = ({
       '--border-size': 'calc(var(--border, 2) * 1px)',
       '--spotlight-size': 'calc(var(--size, 150) * 1px)',
       '--hue': 'calc(var(--base) + (var(--xp, 0) * var(--spread, 0)))',
-      backgroundImage: `radial-gradient(
+      backgroundColor: 'var(--backdrop, transparent)',
+      border: 'var(--border-size) solid var(--backup-border)',
+      position: 'relative' as const,
+    };
+
+    // Skip heavy GPU effects on mobile
+    if (!isMobile) {
+      baseStyles.backgroundImage = `radial-gradient(
         var(--spotlight-size) var(--spotlight-size) at
         calc(var(--x, 0) * 1px)
         calc(var(--y, 0) * 1px),
         hsl(var(--hue, 210) calc(var(--saturation, 100) * 1%) calc(var(--lightness, 70) * 1%) / var(--bg-spot-opacity, 0.1)), transparent
-      )`,
-      backgroundColor: 'var(--backdrop, transparent)',
-      backgroundSize: 'calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)))',
-      backgroundPosition: '50% 50%',
-      backgroundAttachment: 'fixed',
-      border: 'var(--border-size) solid var(--backup-border)',
-      position: 'relative' as const,
-      touchAction: 'none' as const,
-    };
+      )`;
+      baseStyles.backgroundSize = 'calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)))';
+      baseStyles.backgroundPosition = '50% 50%';
+      baseStyles.backgroundAttachment = 'fixed';
+      baseStyles.touchAction = 'none';
+    }
 
     if (width !== undefined) {
       baseStyles.width = typeof width === 'number' ? `${width}px` : width;
@@ -159,10 +168,10 @@ const GlowCard: React.FC<GlowCardProps> = ({
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: beforeAfterStyles }} />
+      {!isMobile && <style dangerouslySetInnerHTML={{ __html: beforeAfterStyles }} />}
       <div
         ref={cardRef}
-        data-glow
+        data-glow={!isMobile || undefined}
         style={getInlineStyles()}
         className={`
           ${getSizeClasses()}
@@ -174,11 +183,11 @@ const GlowCard: React.FC<GlowCardProps> = ({
           shadow-[0_1rem_2rem_-1rem_black]
           p-4
           gap-4
-          backdrop-blur-[5px]
+          ${!isMobile ? 'backdrop-blur-[5px]' : ''}
           ${className}
         `}
       >
-        <div ref={innerRef} data-glow></div>
+        {!isMobile && <div ref={innerRef} data-glow></div>}
         {children}
       </div>
     </>

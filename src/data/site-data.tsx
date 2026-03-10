@@ -177,8 +177,8 @@ export const DATA = {
       location: "Dubai, UAE",
       description:
         "Technology development, software engineering, and full-scale digital solutions for businesses and entrepreneurs worldwide.",
-      logoDark: "/logos/tuffx-white.png",
-      logoLight: "/logos/tuffx-black.png",
+      logoDark: "/logos/tuffx-white.webp",
+      logoLight: "/logos/tuffx-black.webp",
       founded: "2023",
     },
     {
@@ -187,8 +187,8 @@ export const DATA = {
       location: "Proprietary System",
       description:
         "Advanced artificial intelligence trading system powered by large language models and sophisticated market analysis frameworks.",
-      logoDark: "/logos/phoenix-ai-full.png",
-      logoLight: "/logos/phoenix-ai-full.png",
+      logoDark: "/logos/phoenix-ai-full.webp",
+      logoLight: "/logos/phoenix-ai-full.webp",
       founded: "2019",
     },
     {
@@ -197,8 +197,8 @@ export const DATA = {
       location: "Ontario, Canada",
       description:
         "Professional dog training academy building trust, confidence, and lasting harmony between dogs and their owners.",
-      logoDark: "/logos/balanced-paw-white.png",
-      logoLight: "/logos/balanced-paw-black.png",
+      logoDark: "/logos/balanced-paw-white.webp",
+      logoLight: "/logos/balanced-paw-black.webp",
       founded: "2019",
     },
     {
@@ -207,14 +207,14 @@ export const DATA = {
       location: "International",
       description:
         "International service dog certification system providing ID card verification, credentials, and accreditation for certified trainers globally.",
-      logoDark: "/logos/service-paws.png",
-      logoLight: "/logos/service-paws.png",
+      logoDark: "/logos/service-paws.webp",
+      logoLight: "/logos/service-paws.webp",
       founded: "2025",
     },
   ],
 
   hopesHaven: {
-    logo: "/logos/hopes-haven.png",
+    logo: "/logos/hopes-haven.webp",
     description:
       "Dedicated to the rescue, rehabilitation, and rehoming of dogs in need. We partner with shelters and foster networks to give every dog a second chance at life.",
     vision:
