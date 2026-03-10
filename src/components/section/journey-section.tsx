@@ -43,7 +43,7 @@ function JourneyDesktop() {
   const lastSnapIndex = useRef(0);
   const scrollAccum = useRef(0);
   const isTransitioning = useRef(false);
-  const resetTimer = useRef<ReturnType<typeof setTimeout>>();
+  const resetTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Use IntersectionObserver to detect when section is in view,
   // then use wheel events for snap navigation
