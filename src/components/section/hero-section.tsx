@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
-import { motion, useMotionValue, useSpring } from "motion/react";
+import { motion, animate, useMotionValue, useSpring } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { DATA } from "@/data/site-data";
 import BlurFade from "@/components/magicui/blur-fade";
@@ -13,6 +13,7 @@ export default function HeroSection() {
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const maskRadius = useMotionValue(350);
 
   const springX = useSpring(mouseX, { damping: 25, stiffness: 200 });
   const springY = useSpring(mouseY, { damping: 25, stiffness: 200 });
@@ -24,7 +25,8 @@ export default function HeroSection() {
       if (maskRef.current) {
         const x = springX.get();
         const y = springY.get();
-        const v = `radial-gradient(circle 350px at ${x}px ${y}px, black 0%, transparent 100%)`;
+        const r = maskRadius.get();
+        const v = `radial-gradient(circle ${r}px at ${x}px ${y}px, black 0%, transparent 100%)`;
         const s = maskRef.current.style;
         s.setProperty('-webkit-mask-image', v);
         s.setProperty('mask-image', v);
@@ -50,25 +52,30 @@ export default function HeroSection() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Mobile auto-animate: slowly drift the mask across the viewport
+  // Mobile heartbeat pulsation: rhythmic pulse anchored at bottom-center
   useEffect(() => {
     if (!isMobile) return;
 
-    let animationId: number;
-    let angle = 0;
-
-    const animate = () => {
-      angle += 0.003;
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      mouseX.set(vw / 2 + Math.cos(angle) * vw * 0.3);
-      mouseY.set(vh / 2 + Math.sin(angle * 0.7) * vh * 0.2);
-      animationId = requestAnimationFrame(animate);
+    const setPosition = () => {
+      mouseX.set(window.innerWidth / 2);
+      mouseY.set(window.innerHeight * 0.65);
     };
+    setPosition();
 
-    animationId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationId);
-  }, [isMobile, mouseX, mouseY]);
+    window.addEventListener("resize", setPosition);
+
+    // Slow, calm breathing pulse
+    const controls = animate(maskRadius, [180, 450, 180], {
+      duration: 6,
+      ease: "easeInOut",
+      repeat: Infinity,
+    });
+
+    return () => {
+      controls.stop();
+      window.removeEventListener("resize", setPosition);
+    };
+  }, [isMobile, mouseX, mouseY, maskRadius]);
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {

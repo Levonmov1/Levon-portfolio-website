@@ -322,6 +322,36 @@ function Panel({
 }
 
 function JourneyMobile() {
+  const ease = [0.25, 0.46, 0.45, 0.94] as const;
+
+  const cardVariants = {
+    hidden: (index: number) => ({
+      opacity: 0,
+      x: index % 2 === 0 ? -30 : 30,
+      scale: 0.97,
+    }),
+    visible: {
+      opacity: 1,
+      x: 0,
+      scale: 1,
+      transition: {
+        duration: 0.5,
+        ease,
+        staggerChildren: 0.08,
+        when: "beforeChildren" as const,
+      },
+    },
+  };
+
+  const childVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.4, ease },
+    },
+  };
+
   return (
     <div className="w-full px-4 py-16">
       <div className="text-center mb-12">
@@ -337,13 +367,24 @@ function JourneyMobile() {
           const num = String(index + 1).padStart(2, "0");
 
           return (
-            <div
+            <motion.div
               key={`${milestone.year}-${index}`}
               className="relative rounded-xl border border-primary/40 bg-card overflow-hidden"
+              custom={index}
+              variants={cardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
             >
-              {/* Background image */}
+              {/* Background image with parallax */}
               {milestone.bgImage && (
-                <>
+                <motion.div
+                  className="absolute inset-0"
+                  initial={{ y: 20 }}
+                  whileInView={{ y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                >
                   <img
                     src={milestone.bgImage}
                     alt=""
@@ -351,16 +392,20 @@ function JourneyMobile() {
                     draggable={false}
                   />
                   <div className="absolute inset-0 bg-black/80" />
-                </>
+                </motion.div>
               )}
 
               {/* Background video with bottom-to-top fade — mobile */}
               {milestone.bgVideo && (
-                <div
+                <motion.div
                   className="absolute inset-0 z-[1]"
+                  initial={{ y: 15 }}
+                  whileInView={{ y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
                   style={{
-                    maskImage: "linear-gradient(to bottom, transparent 30%, black 70%)",
-                    WebkitMaskImage: "linear-gradient(to bottom, transparent 30%, black 70%)",
+                    maskImage: `linear-gradient(to bottom, transparent ${index === 1 ? "15%" : "30%"}, black ${index === 1 ? "55%" : "70%"})`,
+                    WebkitMaskImage: `linear-gradient(to bottom, transparent ${index === 1 ? "15%" : "30%"}, black ${index === 1 ? "55%" : "70%"})`,
                   }}
                 >
                   <video
@@ -372,13 +417,17 @@ function JourneyMobile() {
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-black/50" />
-                </div>
+                </motion.div>
               )}
 
               {/* Trading algorithm video — mobile, tile index 3 */}
               {index === 3 && (
-                <div
+                <motion.div
                   className="absolute inset-0 z-[1]"
+                  initial={{ y: 15 }}
+                  whileInView={{ y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
                   style={{
                     maskImage: "linear-gradient(to bottom, transparent 30%, black 70%)",
                     WebkitMaskImage: "linear-gradient(to bottom, transparent 30%, black 70%)",
@@ -393,7 +442,7 @@ function JourneyMobile() {
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-black/70" />
-                </div>
+                </motion.div>
               )}
 
               {/* Overlay image on right side — mobile */}
@@ -408,42 +457,51 @@ function JourneyMobile() {
                 </div>
               )}
 
-              <div className={`relative z-[2] p-6 ${milestone.bgVideo || index === 3 ? "pb-48" : ""}`}>
+              <div className={`relative z-[2] p-6 ${milestone.bgVideo || index === 3 ? (index === 1 ? "pb-64" : "pb-48") : ""}`}>
                 {/* Number badge */}
-                <span className="absolute top-4 right-4 text-4xl font-bold text-primary/10">
+                <motion.span
+                  variants={childVariants}
+                  className="absolute top-4 right-4 text-4xl font-bold text-primary/10"
+                >
                   {num}
-                </span>
+                </motion.span>
 
-                <div className="flex items-center gap-3 mb-3">
+                <motion.div variants={childVariants} className="flex items-center gap-3 mb-3">
                   <div className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-primary/30 bg-primary/10">
                     <Icon className="w-4 h-4 text-primary" />
                   </div>
                   <span className="text-lg font-bold text-primary font-mono">
                     {milestone.year}
                   </span>
-                </div>
+                </motion.div>
 
-                <h3 className="text-lg font-bold tracking-tight mb-2">
+                <motion.h3 variants={childVariants} className="text-lg font-bold tracking-tight mb-2">
                   {milestone.title}
-                </h3>
+                </motion.h3>
 
-                <div className="border-l-2 border-primary/30 pl-3">
+                <motion.div variants={childVariants} className="border-l-2 border-primary/30 pl-3">
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {milestone.description}
                   </p>
                   <p className="text-xs text-muted-foreground/50 mt-1 font-mono">
                     {milestone.location}
                   </p>
-                </div>
+                </motion.div>
               </div>
 
-              {/* Image tiles — mobile (below text) */}
+              {/* Image tiles — mobile (below text, delayed pop-in) */}
               {milestone.tileImages && (
-                <div className="relative z-[2] px-6 pb-5 w-3/4 mx-auto">
+                <motion.div
+                  className="relative z-[2] px-6 pb-5 w-3/4 mx-auto"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.5, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                >
                   <ImageTiles images={milestone.tileImages} />
-                </div>
+                </motion.div>
               )}
-            </div>
+            </motion.div>
           );
         })}
       </div>

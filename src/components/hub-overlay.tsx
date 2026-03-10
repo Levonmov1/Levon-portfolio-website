@@ -3,6 +3,7 @@
 import { useHub } from "@/components/hub-provider";
 import { DATA } from "@/data/site-data";
 import ScrollingTicker from "@/components/scrolling-ticker";
+import { ModeToggle } from "@/components/mode-toggle";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
@@ -40,14 +41,24 @@ export default function HubOverlay() {
           transition={{ duration: 0.3 }}
           className="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl flex flex-col"
         >
-          {/* Close button */}
-          <button
-            onClick={close}
-            className="absolute top-6 right-6 z-10 p-2 rounded-full border border-border hover:bg-muted transition-colors"
-            aria-label="Close menu"
-          >
-            <X className="size-6" />
-          </button>
+          {/* Top bar: theme toggle + close */}
+          <div className="absolute top-6 right-6 z-10 flex items-center gap-2">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1, duration: 0.3 }}
+              className="sm:hidden"
+            >
+              <ModeToggle className="size-6 cursor-pointer" />
+            </motion.div>
+            <button
+              onClick={close}
+              className="p-2 rounded-full border border-border hover:bg-muted transition-colors"
+              aria-label="Close menu"
+            >
+              <X className="size-6" />
+            </button>
+          </div>
 
           {/* Main content */}
           <div className="flex-1 flex flex-col md:flex-row items-center justify-center px-8 md:px-16 gap-8 md:gap-16">
