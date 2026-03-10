@@ -2,7 +2,7 @@
 import { motion, Variants } from 'motion/react';
 
 interface ImageTilesProps {
-  images: string[];
+  images: readonly string[];
   columns?: 3;
 }
 

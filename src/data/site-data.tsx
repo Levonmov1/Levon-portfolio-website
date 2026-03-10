@@ -78,6 +78,8 @@ export const DATA = {
       description:
         "At 16, landed my first job at Reptilia Zoo — wrestling alligators, handling cobras, and falling in love with animal welfare and conservation.",
       icon: TurtleIcon,
+      bgImage: null,
+      bgVideo: null,
       tileImages: [
         "/images/reptilia-1.jpg",
         "/images/reptilia-2.jpg",
@@ -86,6 +88,7 @@ export const DATA = {
         "/images/reptilia-5.jpg",
         "/images/reptilia-6.jpg",
       ],
+      overlayImage: null,
     },
     {
       year: "2013",
@@ -97,6 +100,8 @@ export const DATA = {
       icon: LandmarkIcon,
       bgImage: null,
       bgVideo: "/images/Levon-Animal-Shoot.mp4",
+      tileImages: null,
+      overlayImage: null,
     },
     {
       year: "2013",
@@ -107,6 +112,9 @@ export const DATA = {
         "Early adopter of Bitcoin and blockchain technology in Toronto. Became one of the pioneers of the industry — developing blockchain technologies and handling large volumes of crypto transactions in the early days.",
       icon: BitcoinIcon,
       bgImage: null,
+      bgVideo: null,
+      tileImages: null,
+      overlayImage: null,
     },
     {
       year: "2016",
@@ -117,6 +125,9 @@ export const DATA = {
         "Built a smart trading algorithm using market analytics and data to execute micro-trades. The system's consistent success over three years laid the foundation for what would become Phoenix AI.",
       icon: BrainCircuitIcon,
       bgImage: null,
+      bgVideo: null,
+      tileImages: null,
+      overlayImage: null,
     },
     {
       year: "2019",
@@ -127,6 +138,9 @@ export const DATA = {
         "Launched Phoenix AI — sharing the proprietary trading system publicly for the first time. A platform built on years of algorithmic research, giving traders access to institutional-grade analytics and automated strategies.",
       icon: CpuIcon,
       bgImage: "/images/Car-front-snake-darkBG.JPG",
+      bgVideo: null,
+      tileImages: null,
+      overlayImage: null,
     },
     {
       year: "2023",
@@ -137,6 +151,9 @@ export const DATA = {
         "Founded TuffX, a UAE-based technology corporation focused on software engineering, product management, and full-scale digital solutions for businesses worldwide.",
       icon: RocketIcon,
       bgImage: "/images/car-front.JPG",
+      bgVideo: null,
+      tileImages: null,
+      overlayImage: null,
     },
     {
       year: "2025",
@@ -147,6 +164,9 @@ export const DATA = {
         "Founded Hope's Haven Dog Rescue Foundation — a registered charity dedicated to rescuing, rehabilitating, and rehoming dogs in need across the Greater Toronto Area. What started as a lifelong passion for animal welfare became a mission to give every dog a second chance at a loving home.",
       icon: HeartIcon,
       bgImage: "/images/Levon-hope-beach.jpg",
+      bgVideo: null,
+      tileImages: null,
+      overlayImage: null,
     },
   ],
 
