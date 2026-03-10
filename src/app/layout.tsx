@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { HubProvider } from "@/components/hub-provider";
 import HubOverlay from "@/components/hub-overlay";
+import LoadingScreen from "@/components/loading-screen";
 import { DATA } from "@/data/site-data";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -75,6 +76,7 @@ export default function RootLayout({
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="dark">
+          <LoadingScreen />
           <TooltipProvider delayDuration={0}>
             <HubProvider>
               <div className="relative z-10">{children}</div>

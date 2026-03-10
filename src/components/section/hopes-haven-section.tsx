@@ -30,6 +30,7 @@ export default function HopesHavenSection() {
               muted
               loop
               playsInline
+              preload="none"
               className="absolute inset-0 w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-black/50" />
@@ -49,6 +50,7 @@ export default function HopesHavenSection() {
               muted
               loop
               playsInline
+              preload="none"
               className="absolute inset-0 w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-black/50" />

@@ -177,6 +177,7 @@ export default function HeroSection() {
             muted
             loop
             playsInline
+            preload="metadata"
             className="h-full w-full object-cover"
           />
         </div>

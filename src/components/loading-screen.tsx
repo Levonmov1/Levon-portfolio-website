@@ -8,9 +8,8 @@ export default function LoadingScreen() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    // Simulate progress that accelerates as resources load
-    // Real page resources load in parallel, so we animate to ~90% quickly
-    // then wait for window.onload to jump to 100%
+    document.body.style.overflow = 'hidden';
+
     let frame: number;
     let current = 0;
     const target = { value: 90 };
@@ -36,7 +35,10 @@ export default function LoadingScreen() {
 
         if (current >= 99.5) {
           setProgress(100);
-          setTimeout(() => setDone(true), 300);
+          setTimeout(() => {
+            setDone(true);
+            document.body.style.overflow = '';
+          }, 300);
         } else {
           requestAnimationFrame(finish);
         }
@@ -53,6 +55,7 @@ export default function LoadingScreen() {
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener('load', onLoad);
+      document.body.style.overflow = '';
     };
   }, []);
 
