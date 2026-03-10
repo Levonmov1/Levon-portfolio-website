@@ -1,14 +1,50 @@
 "use client";
 
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { FlickeringGrid } from "@/components/magicui/flickering-grid";
 import { DATA } from "@/data/site-data";
 import { Icons } from "@/components/icons";
 
+type Status = "idle" | "sending" | "sent" | "error";
+
 export default function ContactSection() {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const [status, setStatus] = useState<Status>("idle");
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert("Message sent! We'll be in touch.");
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const phone = (formData.get("phone") as string) || "";
+    const message = formData.get("message") as string;
+
+    setStatus("sending");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone, message }),
+      });
+
+      if (!res.ok) throw new Error("Failed to send");
+
+      setStatus("sent");
+      formRef.current?.reset();
+      setTimeout(() => setStatus("idle"), 3000);
+    } catch {
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 3000);
+    }
+  };
+
+  const buttonContent = {
+    idle: "Send Message",
+    sending: "Sending...",
+    sent: "\u2713 Message Sent!",
+    error: "Failed to send. Try again.",
   };
 
   return (
@@ -37,6 +73,7 @@ export default function ContactSection() {
 
         {/* Contact Form */}
         <form
+          ref={formRef}
           onSubmit={handleSubmit}
           className="flex flex-col gap-4 max-w-md mx-auto mt-6 w-full"
         >
@@ -54,6 +91,12 @@ export default function ContactSection() {
             required
             className="border rounded-lg px-4 py-3 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           />
+          <input
+            type="tel"
+            name="phone"
+            placeholder="Phone (optional)"
+            className="border rounded-lg px-4 py-3 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          />
           <textarea
             name="message"
             placeholder="Message"
@@ -63,9 +106,16 @@ export default function ContactSection() {
           />
           <button
             type="submit"
-            className="bg-primary text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+            disabled={status === "sending"}
+            className={`px-8 py-3 rounded-lg font-semibold transition-opacity ${
+              status === "error"
+                ? "bg-red-600 text-white"
+                : status === "sent"
+                  ? "bg-green-600 text-white"
+                  : "bg-primary text-primary-foreground hover:opacity-90"
+            } ${status === "sending" ? "opacity-60 cursor-not-allowed" : ""}`}
           >
-            Send Message
+            {buttonContent[status]}
           </button>
         </form>
 

@@ -1,8 +1,16 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import dynamic from "next/dynamic";
+import { motion } from "motion/react";
 import { DATA } from "@/data/site-data";
+import ImageTiles from "@/components/ui/image-tiles";
+
+const CryptoGravity = dynamic(
+  () => import("@/components/ui/crypto-gravity"),
+  { ssr: false }
+);
+
 
 const milestones = DATA.journey;
 const NUM_PANELS = milestones.length;
@@ -21,28 +29,118 @@ export default function JourneySection() {
   return <JourneyDesktop />;
 }
 
+const SCROLL_THRESHOLD = 150;
+const PEEK_AMOUNT = 40;
+const TRANSITION_COOLDOWN = 1000;
+// Each panel gets this much vertical scroll space (vh) for snapping
+const VH_PER_PANEL = 300;
+
 function JourneyDesktop() {
   const outerRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [peekOffset, setPeekOffset] = useState(0);
+  const lastSnapIndex = useRef(0);
+  const scrollAccum = useRef(0);
+  const isTransitioning = useRef(false);
+  const resetTimer = useRef<ReturnType<typeof setTimeout>>();
 
-  const { scrollYProgress } = useScroll({
-    target: outerRef,
-    offset: ["start start", "end end"],
-  });
+  // Use IntersectionObserver to detect when section is in view,
+  // then use wheel events for snap navigation
+  useEffect(() => {
+    const sticky = stickyRef.current;
+    if (!sticky) return;
 
-  const x = useTransform(
-    scrollYProgress,
-    [0, (NUM_PANELS - 1) / NUM_PANELS],
-    ["0%", `-${(NUM_PANELS - 1) * 100}%`]
-  );
+    const onWheel = (e: WheelEvent) => {
+      // Only handle when sticky container is actually stuck (visible)
+      const rect = sticky.getBoundingClientRect();
+      const isStuck = rect.top <= 1 && rect.top >= -1;
+      if (!isStuck) return;
+
+      if (isTransitioning.current) {
+        e.preventDefault();
+        return;
+      }
+
+      const direction = e.deltaY > 0 ? 1 : -1;
+      const nextIndex = lastSnapIndex.current + direction;
+
+      // At boundaries — let page scroll naturally
+      if (nextIndex < 0 || nextIndex >= NUM_PANELS) {
+        scrollAccum.current = 0;
+        setPeekOffset(0);
+        return;
+      }
+
+      e.preventDefault();
+
+      // Accumulate scroll delta
+      scrollAccum.current += e.deltaY;
+
+      // Reset peek if user stops scrolling
+      clearTimeout(resetTimer.current);
+      resetTimer.current = setTimeout(() => {
+        scrollAccum.current = 0;
+        setPeekOffset(0);
+      }, 400);
+
+      const absAccum = Math.abs(scrollAccum.current);
+
+      if (absAccum < SCROLL_THRESHOLD) {
+        // Peek animation — nudge card in scroll direction
+        const peekProgress = absAccum / SCROLL_THRESHOLD;
+        setPeekOffset(peekProgress * PEEK_AMOUNT * -direction);
+        return;
+      }
+
+      // Threshold reached — commit transition
+      clearTimeout(resetTimer.current);
+      scrollAccum.current = 0;
+      setPeekOffset(0);
+      isTransitioning.current = true;
+      lastSnapIndex.current = nextIndex;
+      setActiveIndex(nextIndex);
+
+      // Sync the outer scroll position so it stays pinned at the right spot
+      if (outerRef.current) {
+        const panelHeight = (window.innerHeight * VH_PER_PANEL) / 100;
+        outerRef.current.scrollTop = nextIndex * panelHeight;
+        window.scrollTo({
+          top: outerRef.current.offsetTop + nextIndex * panelHeight,
+        });
+      }
+
+      setTimeout(() => {
+        isTransitioning.current = false;
+      }, TRANSITION_COOLDOWN);
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      clearTimeout(resetTimer.current);
+    };
+  }, []);
 
   return (
     <div
       ref={outerRef}
-      style={{ height: `${(NUM_PANELS + 1) * 100}vh` }}
+      style={{ height: `${NUM_PANELS * VH_PER_PANEL}vh` }}
       className="relative"
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden bg-background p-4 pb-20 md:p-8 md:pb-20 lg:p-12 lg:pb-20">
-        <motion.div className="flex h-full" style={{ x }}>
+      <div
+        ref={stickyRef}
+        className="sticky top-0 h-screen w-full overflow-hidden bg-background p-4 pb-20 md:p-8 md:pb-20 lg:p-12 lg:pb-20"
+      >
+        <motion.div
+          className="flex h-full"
+          animate={{ x: `calc(-${activeIndex * 100}% + ${peekOffset}px)` }}
+          transition={
+            peekOffset !== 0
+              ? { duration: 0.1, ease: "linear" }
+              : { duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }
+          }
+        >
           {milestones.map((milestone, index) => (
             <Panel key={`${milestone.year}-${index}`} milestone={milestone} index={index} />
           ))}
@@ -80,8 +178,29 @@ function Panel({
         <div className="absolute inset-0 bg-[oklch(0.1_0_0)]" />
       )}
 
+      {/* Background video with left-fade */}
+      {milestone.bgVideo && (
+        <div
+          className="absolute inset-0 z-[1]"
+          style={{
+            maskImage: "linear-gradient(to right, transparent 20%, black 55%)",
+            WebkitMaskImage: "linear-gradient(to right, transparent 20%, black 55%)",
+          }}
+        >
+          <video
+            src={milestone.bgVideo}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
+      )}
+
       {/* Large faded number */}
-      <span className="absolute right-8 top-1/2 -translate-y-1/2 text-[20vw] font-bold leading-none text-white/[0.04] select-none pointer-events-none">
+      <span className="absolute right-8 top-1/2 -translate-y-1/2 text-[20vw] font-bold leading-none text-white/[0.04] select-none pointer-events-none z-[2]">
         {num}
       </span>
 
@@ -129,6 +248,60 @@ function Panel({
           </p>
         </div>
       </div>
+
+      {/* Image tiles — desktop: large centered-right, iPad: split top/bottom */}
+      {milestone.tileImages && (
+        <>
+          {/* Large screens */}
+          <div className="hidden lg:block absolute left-[42%] top-1/2 -translate-y-1/2 w-[36%] z-[5]">
+            <ImageTiles images={milestone.tileImages} />
+          </div>
+          {/* iPad / medium screens — all 6 at top-right */}
+          <div className="hidden md:block lg:hidden absolute right-6 top-8 w-[45%] z-[5]">
+            <ImageTiles images={milestone.tileImages} />
+          </div>
+        </>
+      )}
+
+      {/* Crypto gravity physics — desktop only, tile index 2 */}
+      {index === 2 && (
+        <div className="hidden md:block absolute right-0 top-0 w-[55%] h-full z-[3]">
+          <CryptoGravity />
+        </div>
+      )}
+
+      {/* Trading algorithm background video — tile index 3 */}
+      {index === 3 && (
+        <div
+          className="absolute inset-0 z-[1]"
+          style={{
+            maskImage: "linear-gradient(to right, transparent 20%, black 55%)",
+            WebkitMaskImage: "linear-gradient(to right, transparent 20%, black 55%)",
+          }}
+        >
+          <video
+            src="/images/global-trade-video.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/70" />
+        </div>
+      )}
+
+      {/* Overlay image on right side */}
+      {milestone.overlayImage && !milestone.tileImages && (
+        <div className="absolute right-0 bottom-0 h-[85%] w-1/2 pointer-events-none z-[5]">
+          <img
+            src={milestone.overlayImage}
+            alt=""
+            className="absolute bottom-0 right-8 h-full w-auto object-contain object-bottom"
+            draggable={false}
+          />
+        </div>
+      )}
 
       {/* Progress dots at bottom */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
@@ -179,7 +352,61 @@ function JourneyMobile() {
                 </>
               )}
 
-              <div className="relative p-6">
+              {/* Background video with bottom-to-top fade — mobile */}
+              {milestone.bgVideo && (
+                <div
+                  className="absolute inset-0 z-[1]"
+                  style={{
+                    maskImage: "linear-gradient(to bottom, transparent 30%, black 70%)",
+                    WebkitMaskImage: "linear-gradient(to bottom, transparent 30%, black 70%)",
+                  }}
+                >
+                  <video
+                    src={milestone.bgVideo}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/50" />
+                </div>
+              )}
+
+              {/* Trading algorithm video — mobile, tile index 3 */}
+              {index === 3 && (
+                <div
+                  className="absolute inset-0 z-[1]"
+                  style={{
+                    maskImage: "linear-gradient(to bottom, transparent 30%, black 70%)",
+                    WebkitMaskImage: "linear-gradient(to bottom, transparent 30%, black 70%)",
+                  }}
+                >
+                  <video
+                    src="/images/global-trade-video.mp4"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/70" />
+                </div>
+              )}
+
+              {/* Overlay image on right side — mobile */}
+              {milestone.overlayImage && !milestone.tileImages && (
+                <div className="absolute right-0 bottom-0 h-[80%] w-1/3 pointer-events-none z-[1]">
+                  <img
+                    src={milestone.overlayImage}
+                    alt=""
+                    className="absolute bottom-0 right-2 h-full w-auto object-contain object-bottom opacity-40"
+                    draggable={false}
+                  />
+                </div>
+              )}
+
+              <div className={`relative z-[2] p-6 ${milestone.bgVideo || index === 3 ? "pb-48" : ""}`}>
                 {/* Number badge */}
                 <span className="absolute top-4 right-4 text-4xl font-bold text-primary/10">
                   {num}
@@ -207,6 +434,13 @@ function JourneyMobile() {
                   </p>
                 </div>
               </div>
+
+              {/* Image tiles — mobile (below text) */}
+              {milestone.tileImages && (
+                <div className="relative z-[2] px-6 pb-5 w-3/4 mx-auto">
+                  <ImageTiles images={milestone.tileImages} />
+                </div>
+              )}
             </div>
           );
         })}

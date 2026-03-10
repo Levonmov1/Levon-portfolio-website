@@ -3,15 +3,13 @@
 import { DATA } from "@/data/site-data";
 import BlurFade from "@/components/magicui/blur-fade";
 import VentureCard from "@/components/venture-card";
-import { DottedSurface } from "@/components/ui/dotted-surface";
 
 const BLUR_FADE_DELAY = 0.04;
 
 export default function VenturesSection() {
   return (
     <section id="ventures" className="relative w-full pt-10 pb-40 overflow-hidden">
-      <DottedSurface className="!top-[30%]" />
-      <div className="relative z-10 max-w-5xl mx-auto px-6">
+      <div className="max-w-5xl mx-auto px-6">
         <BlurFade delay={BLUR_FADE_DELAY} inView={true}>
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">

@@ -3,10 +3,6 @@ import { withContentCollections } from "@content-collections/next";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    webpackMemoryOptimizations: true,
-    cpus: 1,
-  },
   async headers() {
     return [
       {

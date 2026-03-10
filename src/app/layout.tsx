@@ -6,7 +6,7 @@ import HubOverlay from "@/components/hub-overlay";
 import { DATA } from "@/data/site-data";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const geist = Geist({
@@ -19,6 +19,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-mono",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-serif",
 });
 
 export const metadata: Metadata = {
@@ -64,7 +70,8 @@ export default function RootLayout({
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
           geist.variable,
-          geistMono.variable
+          geistMono.variable,
+          playfair.variable
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="dark">

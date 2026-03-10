@@ -14,7 +14,7 @@ import {
   CpuIcon,
   RocketIcon,
   ShieldCheckIcon,
-  AwardIcon,
+  TurtleIcon,
 } from "lucide-react";
 
 export const DATA = {
@@ -77,8 +77,15 @@ export const DATA = {
       location: "Vaughan, Ontario",
       description:
         "At 16, landed my first job at Reptilia Zoo — wrestling alligators, handling cobras, and falling in love with animal welfare and conservation.",
-      icon: PawPrintIcon,
-      bgImage: "/images/snake-orange-front.jpg",
+      icon: TurtleIcon,
+      tileImages: [
+        "/images/reptilia-1.jpg",
+        "/images/reptilia-2.jpg",
+        "/images/reptilia-3.jpg",
+        "/images/reptilia-4.jpg",
+        "/images/reptilia-5.jpg",
+        "/images/reptilia-6.jpg",
+      ],
     },
     {
       year: "2013",
@@ -89,6 +96,7 @@ export const DATA = {
         "Entered real estate and created the 'Animals Need Homes' program — donating a portion of every home sale to partner animal rescues. First venture merging business with charitable impact.",
       icon: LandmarkIcon,
       bgImage: null,
+      bgVideo: "/images/Levon-Animal-Shoot.mp4",
     },
     {
       year: "2013",
@@ -112,17 +120,17 @@ export const DATA = {
     },
     {
       year: "2019",
-      title: "PHOENIX AI & BALANCED PAW",
+      title: "PHOENIX AI",
       subtitle: "SCALING UP",
       location: "Toronto, Ontario",
       description:
-        "Launched Phoenix AI — sharing the proprietary trading system publicly for the first time. Co-founded Balanced Paw with wife Hope, a professional dog training academy.",
+        "Launched Phoenix AI — sharing the proprietary trading system publicly for the first time. A platform built on years of algorithmic research, giving traders access to institutional-grade analytics and automated strategies.",
       icon: CpuIcon,
       bgImage: "/images/Car-front-snake-darkBG.JPG",
     },
     {
       year: "2023",
-      title: "TUFFX L.L.C-FZ FOUNDED",
+      title: "TUFFX FOUNDED",
       subtitle: "GOING GLOBAL",
       location: "Dubai, UAE",
       description:
@@ -132,23 +140,13 @@ export const DATA = {
     },
     {
       year: "2025",
-      title: "HOPE'S HAVEN & SERVICE PAWS",
+      title: "HOPE'S HAVEN DOG RESCUE FOUNDATION",
       subtitle: "GIVING BACK",
       location: "Greater Toronto Area",
       description:
-        "Founded Hope's Haven Dog Rescue Foundation and Service Paws International — combining a lifelong passion for animal welfare with entrepreneurial efficiency.",
+        "Founded Hope's Haven Dog Rescue Foundation — a registered charity dedicated to rescuing, rehabilitating, and rehoming dogs in need across the Greater Toronto Area. What started as a lifelong passion for animal welfare became a mission to give every dog a second chance at a loving home.",
       icon: HeartIcon,
-      bgImage: null,
-    },
-    {
-      year: "2026",
-      title: "HOPE'S HAVEN — OFFICIAL CHARITY",
-      subtitle: "LEGACY",
-      location: "Canada",
-      description:
-        "Hope's Haven receives official charity status on January 1st. Growing into one of Canada's most successful dog rescues with a 98% rehoming success rate.",
-      icon: AwardIcon,
-      bgImage: null,
+      bgImage: "/images/Levon-hope-beach.jpg",
     },
   ],
 
@@ -197,13 +195,19 @@ export const DATA = {
 
   hopesHaven: {
     logo: "/logos/hopes-haven.png",
-    mission:
-      "Hope's Haven is a registered Canadian charity and fully volunteer-run dog rescue dedicated to giving stray, abandoned, and abused dogs a second chance at life. We rescue dogs from crisis situations, provide full veterinary care, and carefully match each dog with the perfect forever home.",
-    donateUrl: "https://www.hopeshaven.ca/donate",
+    description:
+      "Dedicated to the rescue, rehabilitation, and rehoming of dogs in need. We partner with shelters and foster networks to give every dog a second chance at life.",
+    vision:
+      "Our long-term vision extends beyond rescue, we're building a network that supports sustainable animal welfare across communities.",
+    donateUrl: "https://hopeshaven.ca/donate",
+    fosterUrl: "https://hopeshaven.ca/foster",
+    adoptUrl: "https://www.hopeshaven.ca/adopt",
+    availableDogsUrl: "https://www.hopeshaven.ca/available-dogs",
     website: "https://hopeshaven.ca",
     stats: [
       { label: "Dogs Rescued", value: 100, suffix: "+" },
-      { label: "Rehoming Success", value: 98, suffix: "%" },
+      { label: "Foster Families", value: 50, suffix: "+" },
+      { label: "Successful Adoptions", value: 95, suffix: "%" },
     ],
     social: {
       instagram: "https://www.instagram.com/hopes_haven_dogrescue",
