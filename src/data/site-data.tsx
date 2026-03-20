@@ -10,7 +10,7 @@ import {
   PawPrintIcon,
   LandmarkIcon,
   BitcoinIcon,
-  BrainCircuitIcon,
+  ChartCandlestickIcon,
   CpuIcon,
   RocketIcon,
   ShieldCheckIcon,
@@ -123,7 +123,7 @@ export const DATA = {
       location: "Age 23 · 3 years unbroken track record",
       description:
         "Built a smart trading algorithm using market analytics and data to execute micro-trades. The system's consistent success over three years laid the foundation for what would become Phoenix AI.",
-      icon: BrainCircuitIcon,
+      icon: ChartCandlestickIcon,
       bgImage: null,
       bgVideo: null,
       tileImages: null,
