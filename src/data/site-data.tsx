@@ -74,7 +74,7 @@ export const DATA = {
       year: "2009",
       title: "REPTILIA ZOO",
       subtitle: "WHERE IT ALL BEGAN",
-      location: "Vaughan, Ontario",
+      location: "Age 16 · First alligator wrestle",
       description:
         "At 16, landed my first job at Reptilia Zoo — wrestling alligators, handling cobras, and falling in love with animal welfare and conservation.",
       icon: TurtleIcon,
@@ -94,7 +94,7 @@ export const DATA = {
       year: "2013",
       title: "REAL ESTATE & ANIMALS NEED HOMES",
       subtitle: "PURPOSE MEETS BUSINESS",
-      location: "Toronto, Ontario",
+      location: "Age 20 · Youngest agent in office",
       description:
         "Entered real estate and created the 'Animals Need Homes' program — donating a portion of every home sale to partner animal rescues. First venture merging business with charitable impact.",
       icon: LandmarkIcon,
@@ -107,7 +107,7 @@ export const DATA = {
       year: "2013",
       title: "BITCOIN & BLOCKCHAIN PIONEER",
       subtitle: "EARLY ADOPTION",
-      location: "Toronto, Ontario",
+      location: "Age 20 · Early adopter since $100/BTC",
       description:
         "Early adopter of Bitcoin and blockchain technology in Toronto. Became one of the pioneers of the industry — developing blockchain technologies and handling large volumes of crypto transactions in the early days.",
       icon: BitcoinIcon,
@@ -120,7 +120,7 @@ export const DATA = {
       year: "2016",
       title: "FIRST TRADING ALGORITHM",
       subtitle: "BUILDING THE FOUNDATION",
-      location: "Toronto, Ontario",
+      location: "Age 23 · 3 years unbroken track record",
       description:
         "Built a smart trading algorithm using market analytics and data to execute micro-trades. The system's consistent success over three years laid the foundation for what would become Phoenix AI.",
       icon: BrainCircuitIcon,
@@ -133,7 +133,7 @@ export const DATA = {
       year: "2019",
       title: "PHOENIX AI",
       subtitle: "SCALING UP",
-      location: "Toronto, Ontario",
+      location: "Age 26 · First public launch",
       description:
         "Launched Phoenix AI — sharing the proprietary trading system publicly for the first time. A platform built on years of algorithmic research, giving traders access to institutional-grade analytics and automated strategies.",
       icon: CpuIcon,
@@ -146,7 +146,7 @@ export const DATA = {
       year: "2023",
       title: "TUFFX FOUNDED",
       subtitle: "GOING GLOBAL",
-      location: "Dubai, UAE",
+      location: "Age 30 · Expanded to Dubai",
       description:
         "Founded TuffX, a UAE-based technology corporation focused on software engineering, product management, and full-scale digital solutions for businesses worldwide.",
       icon: RocketIcon,
@@ -159,7 +159,7 @@ export const DATA = {
       year: "2025",
       title: "HOPE'S HAVEN DOG RESCUE FOUNDATION",
       subtitle: "GIVING BACK",
-      location: "Greater Toronto Area",
+      location: "Age 32 · Registered Canadian charity",
       description:
         "Founded Hope's Haven Dog Rescue Foundation — a registered charity dedicated to rescuing, rehabilitating, and rehoming dogs in need across the Greater Toronto Area. What started as a lifelong passion for animal welfare became a mission to give every dog a second chance at a loving home.",
       icon: HeartIcon,
